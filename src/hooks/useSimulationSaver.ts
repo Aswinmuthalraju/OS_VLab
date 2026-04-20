@@ -48,7 +48,7 @@ export function useSavedSimulations(
     if (autoLoad && currentUser) {
       refreshSimulations(algorithmType);
     }
-  }, [currentUser, autoLoad, algorithmType]);
+  }, [currentUser, autoLoad, algorithmType, refreshSimulations]);
 
   const refreshSimulations = useCallback(
     async (type?: string) => {

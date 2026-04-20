@@ -49,7 +49,7 @@ export function updateUrlPage(pageId: Page): void {
     // Remove stale state when navigating away
     params.delete('state');
     const newUrl = `${window.location.pathname}?${params.toString()}`;
-    window.history.replaceState(null, '', newUrl);
+    window.history.pushState(null, '', newUrl);
   } catch {
     // Non-critical; silently ignore
   }

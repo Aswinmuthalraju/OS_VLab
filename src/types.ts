@@ -1,5 +1,3 @@
-// FIX: Create content for types.ts to define all shared types for the application.
-
 import type { LucideProps } from 'lucide-react';
 import type { ForwardRefExoticComponent, RefAttributes } from 'react';
 

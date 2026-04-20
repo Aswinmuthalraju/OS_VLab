@@ -1,6 +1,16 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
+import type { User } from '@supabase/supabase-js';
 import { supabase } from '@/supabase';
-import type { CurrentUser } from '@/types';
+import type { AppUser, CurrentUser } from '@/types';
+
+function mapUser(user: User): AppUser {
+  return {
+    uid: user.id,
+    email: user.email,
+    displayName: user.user_metadata?.full_name ?? user.user_metadata?.name ?? null,
+    photoURL: user.user_metadata?.avatar_url ?? null,
+  };
+}
 
 interface AuthContextType {
   currentUser: CurrentUser;
@@ -21,31 +31,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setCurrentUser({
-          uid: session.user.id,
-          email: session.user.email,
-          displayName: session.user.user_metadata?.full_name || session.user.user_metadata?.name || null,
-          photoURL: session.user.user_metadata?.avatar_url || null,
-        } as any);
-      } else {
-        setCurrentUser(null);
-      }
+      setCurrentUser(session?.user ? mapUser(session.user) : null);
       setLoading(false);
     });
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        setCurrentUser({
-          uid: session.user.id,
-          email: session.user.email,
-          displayName: session.user.user_metadata?.full_name || session.user.user_metadata?.name || null,
-          photoURL: session.user.user_metadata?.avatar_url || null,
-        } as any);
-      } else {
-        setCurrentUser(null);
-      }
+      setCurrentUser(session?.user ? mapUser(session.user) : null);
       setLoading(false);
     });
 

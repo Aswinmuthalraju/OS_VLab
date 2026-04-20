@@ -9,6 +9,7 @@ import LoginModal from '@/components/modals/LoginModal';
 import SignUpModal from '@/components/modals/SignUpModal';
 
 import { ToastContainer, useToast } from '@/components/shared/Toast';
+import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { readStateFromUrl, updateUrlPage } from '@/utils/permalinkUtils';
 
 // Keep HomePage eager for fast initial render
@@ -108,16 +109,18 @@ const App: React.FC = () => {
           )}
           <main className="flex-1 overflow-y-auto p-6 md:p-8 bg-panel/30">
             <div className={!isSimulationPage ? 'container mx-auto' : ''}>
-              <Suspense fallback={
-                <div className="flex h-full w-full items-center justify-center p-12">
-                  <div className="flex flex-col items-center space-y-4 text-text-muted">
-                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-current border-t-transparent text-accent"></div>
-                    <p className="text-sm font-bold font-mono tracking-tight">LOADING MODULE...</p>
+              <ErrorBoundary>
+                <Suspense fallback={
+                  <div className="flex h-full w-full items-center justify-center p-12">
+                    <div className="flex flex-col items-center space-y-4 text-text-muted">
+                      <div className="h-8 w-8 animate-spin rounded-full border-4 border-current border-t-transparent text-accent"></div>
+                      <p className="text-sm font-bold font-mono tracking-tight">LOADING MODULE...</p>
+                    </div>
                   </div>
-                </div>
-              }>
-                {renderPage()}
-              </Suspense>
+                }>
+                  {renderPage()}
+                </Suspense>
+              </ErrorBoundary>
             </div>
             <Footer currentPage={page} />
           </main>

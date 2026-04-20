@@ -81,7 +81,7 @@ export async function saveSimulation(
 ): Promise<string> {
   if (!user) throw new Error("User must be logged in to save simulations.");
 
-  const simulationId = `${Date.now()}-${user.uid.substring(0, 8)}`;
+  const simulationId = crypto.randomUUID();
 
   const { error } = await supabase.from('simulations').insert({
     id: simulationId,

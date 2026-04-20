@@ -62,33 +62,27 @@ export function useQuizProgress() {
   const markCompleted = useCallback((moduleId: string, score: number) => {
     setProgress((prev) => {
       const existing = prev[moduleId] || { completed: false, score: 0, totalAttempts: 0 };
-      
-      // Only keep the highest score
       const highestScore = Math.max(existing.score, score);
-      
+
+      if (currentUser) {
+        supabaseSaveQuizProgress(currentUser, moduleId, highestScore, 100, {
+          timestamp: new Date().toISOString(),
+        }).catch((error) => {
+          console.warn('Failed to save quiz progress to Database', error);
+        });
+      }
+
       return {
         ...prev,
         [moduleId]: {
           completed: true,
           score: highestScore,
           totalAttempts: existing.totalAttempts + 1,
-          lastAttemptDate: new Date().toISOString()
-        }
+          lastAttemptDate: new Date().toISOString(),
+        },
       };
     });
-
-    // Also save to Supabase if user is logged in
-    if (currentUser) {
-      const existing = progress[moduleId] || { completed: false, score: 0, totalAttempts: 0 };
-      const highestScore = Math.max(existing.score, score);
-      
-      supabaseSaveQuizProgress(currentUser, moduleId, highestScore, 100, {
-        timestamp: new Date().toISOString(),
-      }).catch((error) => {
-        console.warn('Failed to save quiz progress to Database', error);
-      });
-    }
-  }, [currentUser, progress]);
+  }, [currentUser]);
 
   const isCompleted = useCallback((moduleId: string): boolean => {
     return progress[moduleId]?.completed || false;
