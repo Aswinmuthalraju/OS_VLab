@@ -43,13 +43,6 @@ export function useSavedSimulations(
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Load simulations on mount or when dependencies change
-  useEffect(() => {
-    if (autoLoad && currentUser) {
-      refreshSimulations(algorithmType);
-    }
-  }, [currentUser, autoLoad, algorithmType, refreshSimulations]);
-
   const refreshSimulations = useCallback(
     async (type?: string) => {
       if (!currentUser) {
@@ -73,6 +66,13 @@ export function useSavedSimulations(
     },
     [currentUser, algorithmType]
   );
+
+  // Load simulations on mount or when dependencies change
+  useEffect(() => {
+    if (autoLoad && currentUser) {
+      refreshSimulations(algorithmType);
+    }
+  }, [currentUser, autoLoad, algorithmType, refreshSimulations]);
 
   const saveSimulation = useCallback(
     async (
